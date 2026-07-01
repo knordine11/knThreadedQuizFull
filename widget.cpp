@@ -13,6 +13,7 @@
 #include <iostream>
 #include <QMessageBox>
 #include <QUrl>
+#include <QTimer>
 
 extern bool collectMicData;
 extern double rec_arr[];    // DEFINED AS DOUBLE FOR FFTW
@@ -26,6 +27,7 @@ extern QString currentlesson;
 const QList <QString> note_letters = {"C", "C#", "D", "D#", "E",
                                      "F", "F#", "G", "G#", "A", "A#", "B" };
 int curLessonInt;
+//int shiftedIndex = 0;
 int orientation [21] = {1,2,3,4,5,6,7,8,1,8,1,8,1,8,7,6,5,4,3,2,1};
 QMap<QString, int> tonic_map = {
     {"G3", 43}, {"A3", 45}, {"B3", 47}, {"C4", 48}, {"D4", 50}, {"A4", 52}, {"B4", 54}, {"C5", 55}
@@ -43,6 +45,7 @@ extern QList<QByteArray> rawRecArrays;
 FftStuff ftw;
 int accValue = 0;
 int displayDuration = 3000;
+int playDuration = 3000;
 
 
 Microphone::Microphone(const QAudioFormat &format) : m_format(format) {
@@ -177,12 +180,12 @@ Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
-    ui->setupUi(this);
-    this->setWindowTitle("Fuii Quiz tester");
+    ui->setupUi(this);    
+    this->setWindowTitle("Full Quiz tester");
     initializeWindow();
     initializeAudioInput(QMediaDevices::defaultAudioInput());
     initializeAudioOutput(m_devicesOut->defaultAudioOutput());
-    QPixmap pix(":/img/down-arrow.png");    
+    QPixmap pix(":/img/down-arrow.png");
     ui->lb_arrow->setPixmap(pix);
     ui->lb_arrow->move(800, 100);
     FileLoader::ReadConfig();
@@ -195,6 +198,7 @@ Widget::Widget(QWidget *parent)
     FileLoader::GetRandomTestSet(gTestGroup[curLessonInt]);
     FftStuff fts;
     orientationFlag = true;
+    m_timer = new QTimer(this);
     m_Microphone->moveToThread(&MicThread);
     MicThread.setObjectName("MicThread");
     MicThread.start();
@@ -202,6 +206,7 @@ Widget::Widget(QWidget *parent)
     connect(&ftw, &FftStuff::valueChanged,this, &Widget::updateKBnote, Qt::QueuedConnection);
     connect(&ftw, &FftStuff::on_foundNote,this, &Widget::Got_Note, Qt::QueuedConnection);
     connect(m_Microphone, &Microphone::on_TimeOut, this, &Widget::TimeOut);
+    connect(m_timer,&QTimer::timeout,this,&Widget::TimeOut);
 }
 
 Widget::~Widget()
@@ -287,25 +292,18 @@ void Widget::paintEvent(QPaintEvent * /* event */)
 }
 
 void Widget::on_btnStart_clicked()
-{
+{    
     restartAudioStream();
     qDebug() << "start pushed...";
     ui->btnStart->setVisible(false);
     qDebug() << "starting...";
-    curLessonInt = currentlesson.toInt();
-    if (currentlesson != "1")
-    {
-        ui->lb_review->setText("REVIEW");
-        curLessonInt -= 1;
-        currentlesson = QString::number(curLessonInt);
-    }
-    else
-    {
-        ui->lb_review->setText("CURRENT");
-    }
-    QString temp = "Lesson #" + currentlesson + " Key " + gKey[curLessonInt-1]
-                   + " Test Notes " + gTestGroup[curLessonInt-1];
+    QString temp = "Lesson #" + currentlesson + " Key " + gKey[curLessonInt]
+                   + " Test Notes " + gTestGroup[curLessonInt];
     ui->lb_title->setText(temp);
+    ui->lb_score->setText("0 of 0");
+    ui->lb_info->setText("up scale 1 to 7\n octaves 3 times\ndown scale 7 to 1");
+    curLessonInt = currentlesson.toInt();
+
     // get sound array set
     tonicNote = tonic_map[gNote[curLessonInt]];
     qDebug() << tonicNote;
@@ -330,6 +328,8 @@ void Widget::restartAudioStream()
 
 void Widget::do_Orientation(int nPos)
 {
+    m_timer->setInterval(playDuration);
+    m_timer->start();
     playedNote = orientation[nPos] - 1;
     kbPlayed = kbNotePlayLists[orientation[nPos] - 1];
     m_Speaker->newTest( rawRecArrays[orientation[nPos] - 1]);
@@ -343,6 +343,8 @@ void Widget::do_Orientation(int nPos)
 
 void Widget::do_Quiz(int nPos)
 {
+    m_timer->setInterval(playDuration);
+    m_timer->start();
     playedNote = testNotes[nPos] - 1;
     kbPlayed = kbNotePlayLists[testNotes[nPos] - 1];
     m_Speaker->newTest( rawRecArrays[testNotes[nPos] - 1]);
@@ -400,6 +402,7 @@ void Widget::play_next_note()
 
 void Widget::TimeOut()
 {
+    m_timer->stop();
     m_audioSource->suspend();
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Timed Out", "Continue?",
@@ -445,8 +448,16 @@ void Widget::Got_Note(int kbValue)
 {
     playedCnt++;
     m_audioSource->stop();
+    ui->progBarPlayed->setValue(playedCnt);
+    if (kbValue == kbPlayed)
+    {
+        goodCnt++;
+        ui->progBarGood->setValue(goodCnt);
+    }
+    QString temp = QString::number(goodCnt) + " of " + QString::number(playedCnt);
+    ui->lb_score->setText(temp);
     qDebug() << "-->note found: " << kbValue;
-    stopSound();
+    // stopSound();
     int heardNote = kbValue;
     ui->lb_arrow->move(10+((heardNote - tonicNote)*45), 100);
     ui->lb_arrow->repaint();
@@ -578,10 +589,9 @@ void Widget::Got_Note(int kbValue)
 
     // m_Microphone->start();
     ui->lb_arrow->move(800, 100);
-    playedCnt++;
     qDebug() << "Keyboard value heard: " << kbValue;
-    QThread::msleep(displayDuration);
-
+    // QThread::msleep(displayDuration);
+    stopSound();
     if(nPos < 21 and orientationFlag)
     {
         play_next_note();
@@ -597,6 +607,7 @@ void Widget::stopSound()
     qDebug() << "stop Sound...";
     if(orientationFlag and nPos == 21)
     {
+        m_timer->stop();
         MicThread.exit();
         SpeakerThread.exit();
         SpeakerThread.start();
@@ -608,6 +619,7 @@ void Widget::stopSound()
                                       QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::Yes) {
             qDebug() << "continuing...";
+            ui->lb_info->setText("Started Lesson\nfrom random notes");
             m_audioSource->resume();
             playedCnt = 0;
             goodCnt = 0;
@@ -620,10 +632,12 @@ void Widget::stopSound()
     }
     if(!orientationFlag and nPos == 20)
     {
+        m_timer->stop();
         MicThread.exit();
         SpeakerThread.exit();
         SpeakerThread.start();
         m_audioSource->suspend();
+        ui->lb_info->setText("TO GO TO THE\nNEXT LESSON\na test score of 100%\nor\n90% ave of last 5 tests of 20");
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Lesson Complete", "Continue?",
                                       QMessageBox::Yes|QMessageBox::No);
@@ -650,7 +664,7 @@ void Widget::getNextLesson(int indexVal)
     m_Speaker->clearBuffer();
     qDebug() << "m_buffer" << m_Speaker->m_buffer;
     m_audioOutput->suspend();
-    curLessonInt = indexVal++;
+    curLessonInt = indexVal + 1;
     currentlesson = QString::number(indexVal);
     kbNotePlayLists.clear();
     gNote.clear();
@@ -678,11 +692,22 @@ void Widget::getNextLesson(int indexVal)
     playedCnt = 0;
     goodCnt = 0;
     nPos = 0;
+    ui->lb_info->setText("up scale 1 to 7\n octaves 3 times\ndown scale 7 to 1");
     m_audioOutput->resume();
 }
 
-void Widget::on_sldDuration_valueChanged(int value)
+void Widget::on_sldDisplayTime_valueChanged(int value)
 {
     qDebug() << "--->value = " << value;
     displayDuration = value*1000;
+    ui->lb_DurationPos->setText(QString::number(value));
 }
+
+
+void Widget::on_sldTimeoutDuration_valueChanged(int value)
+{
+    qDebug() << "--->value = " << value;
+    playDuration = value*1000;
+    ui->lb_TimeoutPos->setText(QString::number(value));
+}
+

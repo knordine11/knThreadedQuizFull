@@ -10,6 +10,7 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QThread>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -90,6 +91,7 @@ public:
     int nPos;
     int kbPlayed;
 
+
 protected:
     void paintEvent(QPaintEvent *event);
 
@@ -103,13 +105,17 @@ public slots:
 
 private slots:
     void on_btnStart_clicked();
-    void on_sldDuration_valueChanged(int value);
+
+    void on_sldDisplayTime_valueChanged(int value);
+
+    void on_sldTimeoutDuration_valueChanged(int value);
 
 private:
     void initializeWindow();
     void initializeAudioInput(const QAudioDevice &deviceInfo);
     void initializeAudioOutput(const QAudioDevice &deviceInfo);
     void restartAudioStream();
+    QTimer *m_timer;
     QMediaDevices *m_devices = nullptr;
     Microphone *m_Microphone;
     QAudioSource *m_audioSource;

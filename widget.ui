@@ -7,30 +7,33 @@
     <x>0</x>
     <y>0</y>
     <width>620</width>
-    <height>600</height>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Widget</string>
   </property>
-  <widget class="QProgressBar" name="progressBar_2">
+  <widget class="QProgressBar" name="progBarPlayed">
    <property name="geometry">
     <rect>
      <x>201</x>
-     <y>360</y>
+     <y>340</y>
      <width>201</width>
      <height>23</height>
     </rect>
    </property>
+   <property name="maximum">
+    <number>20</number>
+   </property>
    <property name="value">
-    <number>24</number>
+    <number>0</number>
    </property>
   </widget>
   <widget class="QLabel" name="label_10">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>450</y>
+     <x>220</x>
+     <y>440</y>
      <width>150</width>
      <height>16</height>
     </rect>
@@ -39,20 +42,26 @@
     <number>4</number>
    </property>
    <property name="text">
-    <string>Timeout  Duration</string>
+    <string>Timeout  Duration in 1-4 secs</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="label_9">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>400</y>
+     <x>220</x>
+     <y>380</y>
      <width>150</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>Display Duration</string>
+    <string>Display Duration in 1-8 secs</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="lb_info">
@@ -63,6 +72,11 @@
      <width>180</width>
      <height>240</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
    </property>
    <property name="styleSheet">
     <string notr="true">background: white;</string>
@@ -88,7 +102,7 @@
    <property name="geometry">
     <rect>
      <x>252</x>
-     <y>340</y>
+     <y>320</y>
      <width>150</width>
      <height>16</height>
     </rect>
@@ -129,7 +143,7 @@ background: &quot;white&quot;;</string>
    <property name="geometry">
     <rect>
      <x>251</x>
-     <y>290</y>
+     <y>270</y>
      <width>150</width>
      <height>16</height>
     </rect>
@@ -157,23 +171,35 @@ background: &quot;white&quot;;</string>
     <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QSlider" name="sldDisplayDelay">
+  <widget class="QSlider" name="sldDisplayTime">
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>420</y>
+     <y>405</y>
      <width>160</width>
-     <height>16</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="minimum">
     <number>1</number>
    </property>
    <property name="maximum">
-    <number>7</number>
+    <number>8</number>
+   </property>
+   <property name="value">
+    <number>3</number>
+   </property>
+   <property name="sliderPosition">
+    <number>3</number>
    </property>
    <property name="orientation">
     <enum>Qt::Orientation::Horizontal</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TickPosition::TicksAbove</enum>
+   </property>
+   <property name="tickInterval">
+    <number>1</number>
    </property>
   </widget>
   <widget class="QPushButton" name="btnStart">
@@ -234,17 +260,20 @@ color: blue;</string>
     <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QProgressBar" name="progressBar">
+  <widget class="QProgressBar" name="progBarGood">
    <property name="geometry">
     <rect>
      <x>201</x>
-     <y>310</y>
+     <y>290</y>
      <width>201</width>
      <height>23</height>
     </rect>
    </property>
+   <property name="maximum">
+    <number>20</number>
+   </property>
    <property name="value">
-    <number>24</number>
+    <number>0</number>
    </property>
   </widget>
   <widget class="QLabel" name="note4">
@@ -280,14 +309,14 @@ background: &quot;white&quot;;</string>
     <rect>
      <x>121</x>
      <y>10</y>
-     <width>321</width>
+     <width>371</width>
      <height>40</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Courier New</family>
-     <pointsize>14</pointsize>
+     <pointsize>12</pointsize>
      <bold>true</bold>
     </font>
    </property>
@@ -333,10 +362,10 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="lb_note">
    <property name="geometry">
     <rect>
-     <x>461</x>
-     <y>10</y>
-     <width>37</width>
-     <height>51</height>
+     <x>530</x>
+     <y>80</y>
+     <width>51</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">
@@ -404,34 +433,13 @@ background: &quot;white&quot;;</string>
     <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="lb_Monitor">
-   <property name="geometry">
-    <rect>
-     <x>250</x>
-     <y>230</y>
-     <width>111</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>0</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignCenter</set>
-   </property>
-  </widget>
   <widget class="QSlider" name="sldTimeoutDuration">
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>470</y>
+     <y>460</y>
      <width>160</width>
-     <height>16</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="minimum">
@@ -440,8 +448,17 @@ background: &quot;white&quot;;</string>
    <property name="maximum">
     <number>4</number>
    </property>
+   <property name="sliderPosition">
+    <number>3</number>
+   </property>
    <property name="orientation">
     <enum>Qt::Orientation::Horizontal</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TickPosition::TicksAbove</enum>
+   </property>
+   <property name="tickInterval">
+    <number>1</number>
    </property>
   </widget>
   <widget class="QLabel" name="note5">
@@ -504,7 +521,7 @@ background: &quot;white&quot;;</string>
    <property name="geometry">
     <rect>
      <x>201</x>
-     <y>250</y>
+     <y>230</y>
      <width>210</width>
      <height>40</height>
     </rect>
@@ -791,6 +808,38 @@ color: blue;</string>
    </property>
    <property name="text">
     <string>0 of 0</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignmentFlag::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lb_DurationPos">
+   <property name="geometry">
+    <rect>
+     <x>390</x>
+     <y>390</y>
+     <width>21</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>3</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignmentFlag::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lb_TimeoutPos">
+   <property name="geometry">
+    <rect>
+     <x>390</x>
+     <y>450</y>
+     <width>21</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>3</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignmentFlag::AlignCenter</set>
