@@ -46,6 +46,7 @@ FftStuff ftw;
 int accValue = 0;
 int displayDuration = 3000;
 int playDuration = 3000;
+bool reviewFlag = false;
 
 
 Microphone::Microphone(const QAudioFormat &format) : m_format(format) {
@@ -180,21 +181,31 @@ Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
-    ui->setupUi(this);    
-    this->setWindowTitle("Full Quiz tester");
+    ui->setupUi(this);
+    this->setWindowTitle("Ear Trainer version 1.0");
     initializeWindow();
     initializeAudioInput(QMediaDevices::defaultAudioInput());
     initializeAudioOutput(m_devicesOut->defaultAudioOutput());
     QPixmap pix(":/img/down-arrow.png");
     ui->lb_arrow->setPixmap(pix);
     ui->lb_arrow->move(800, 100);
-    FileLoader::ReadConfig();
+    FileLoader::ReadConfig();    
     FileLoader::ReadLesson();
     ui->lb_review->setText("Start");
     ui->lb_title->setText("Lesson");
     accValue = 0;
     qDebug() << "currentlesson = " << currentlesson;
-    curLessonInt = currentlesson.toInt() - 1;
+    if(currentlesson != "1")
+    {
+        reviewFlag = true;
+        curLessonInt = currentlesson.toInt() - 2;
+    }
+    else
+    {
+        reviewFlag = false;
+        curLessonInt = currentlesson.toInt() - 1;
+    }
+
     FileLoader::GetRandomTestSet(gTestGroup[curLessonInt]);
     FftStuff fts;
     orientationFlag = true;
@@ -298,7 +309,13 @@ void Widget::on_btnStart_clicked()
     ui->btnStart->setVisible(false);
     ui->btnTunerON->setVisible(false);
     qDebug() << "starting...";
-    QString temp = "Lesson #" + currentlesson + " Key " + gKey[curLessonInt]
+    if(reviewFlag)
+    {
+        ui->lb_review->setText("Review");
+    } else{
+        ui->lb_review->setText("Lesson");
+    }
+    QString temp = "Lesson #" + QString::number(curLessonInt + 1) + " Key " + gKey[curLessonInt]
                    + " Test Notes " + gTestGroup[curLessonInt];
     ui->lb_title->setText(temp);
     ui->lb_score->setText("0 of 0");
@@ -621,6 +638,7 @@ void Widget::stopSound()
         if (reply == QMessageBox::Yes) {
             qDebug() << "continuing...";
             ui->lb_info->setText("Started Lesson\nfrom random notes");
+            // ui->lb_review->setText("Lesson");
             ui->lb_curr_activity->setText("Lesson");
             m_audioSource->resume();
             playedCnt = 0;
@@ -666,8 +684,7 @@ void Widget::getNextLesson(int indexVal)
     m_Speaker->clearBuffer();
     qDebug() << "m_buffer" << m_Speaker->m_buffer;
     m_audioOutput->suspend();
-    curLessonInt = indexVal + 1;
-    currentlesson = QString::number(curLessonInt);
+
     kbNotePlayLists.clear();
     gNote.clear();
     gKey.clear();
@@ -675,8 +692,18 @@ void Widget::getNextLesson(int indexVal)
     noteFiles.clear();
     testNotes.clear();
     rawRecArrays.clear();
+
     // update config to new lesson
-    FileLoader::updateConfigLesson(curLessonInt);
+    if(ui->lb_review->text() == "Review"){
+        ui->lb_review->setText("Lesson");
+
+        curLessonInt = indexVal - 1;
+    } else {
+        curLessonInt = indexVal;
+        currentlesson = QString::number(curLessonInt);
+        FileLoader::updateConfigLesson(curLessonInt);        
+    }
+    ui->lb_curr_activity->setText("Orientation");
     qDebug() << "testIndex value: " << curLessonInt;
     FileLoader files;
     // get sound array set
