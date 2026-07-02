@@ -148,7 +148,6 @@ void FileLoader::GetRandomTestSet(QString randomNotes)
 
 void FileLoader::updateConfigLesson(int value)  // updates lesson number in config.txt
 {
-    QString lessonNow = QString::number(value + 1) + ",Current Lesson";
     QFile file(":/data/config.txt");
     if(!file.exists())
     {
@@ -166,17 +165,15 @@ void FileLoader::updateConfigLesson(int value)  // updates lesson number in conf
     QString line3 = stream.readLine();
     qInfo() << line3;
 
-    qInfo() << lessonNow;
+
     file.close();
 
-    QFile file2("C://QtWorking/knThreadedQuizBasic/config.txt");
+    QFile file2("C://QtWorking/knThreadedQuizFull/config.txt");
     if (!file2.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text))
     {
         qCritical("Open failed");
     }
-    qInfo() << line1;
-    qInfo() << line2;
-    qInfo() << line3;
+    QString lessonNow = QString::number(value) + ",Current Lesson";
 
     QTextStream streamOut(&file2);
     streamOut << line1 << Qt::endl;

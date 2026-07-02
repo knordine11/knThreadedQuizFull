@@ -110,6 +110,8 @@ private slots:
 
     void on_sldTimeoutDuration_valueChanged(int value);
 
+    void on_btnTunerON_clicked();
+
 private:
     void initializeWindow();
     void initializeAudioInput(const QAudioDevice &deviceInfo);

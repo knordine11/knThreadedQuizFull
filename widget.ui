@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
+    <width>690</width>
     <height>510</height>
    </rect>
   </property>
@@ -16,8 +16,8 @@
   <widget class="QProgressBar" name="progBarPlayed">
    <property name="geometry">
     <rect>
-     <x>201</x>
-     <y>340</y>
+     <x>241</x>
+     <y>350</y>
      <width>201</width>
      <height>23</height>
     </rect>
@@ -32,8 +32,8 @@
   <widget class="QLabel" name="label_10">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>440</y>
+     <x>260</x>
+     <y>450</y>
      <width>150</width>
      <height>16</height>
     </rect>
@@ -51,8 +51,8 @@
   <widget class="QLabel" name="label_9">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>380</y>
+     <x>260</x>
+     <y>390</y>
      <width>150</width>
      <height>16</height>
     </rect>
@@ -67,8 +67,8 @@
   <widget class="QLabel" name="lb_info">
    <property name="geometry">
     <rect>
-     <x>421</x>
-     <y>250</y>
+     <x>461</x>
+     <y>260</y>
      <width>180</width>
      <height>240</height>
     </rect>
@@ -88,8 +88,8 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>11</x>
-     <y>230</y>
+     <x>51</x>
+     <y>240</y>
      <width>150</width>
      <height>16</height>
     </rect>
@@ -101,8 +101,8 @@
   <widget class="QLabel" name="label_7">
    <property name="geometry">
     <rect>
-     <x>252</x>
-     <y>320</y>
+     <x>292</x>
+     <y>330</y>
      <width>150</width>
      <height>16</height>
     </rect>
@@ -114,8 +114,8 @@
   <widget class="QLabel" name="note1s">
    <property name="geometry">
     <rect>
-     <x>146</x>
-     <y>160</y>
+     <x>190</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -142,8 +142,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>251</x>
-     <y>270</y>
+     <x>291</x>
+     <y>280</y>
      <width>150</width>
      <height>16</height>
     </rect>
@@ -155,7 +155,7 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="lb_tuner">
    <property name="geometry">
     <rect>
-     <x>501</x>
+     <x>567</x>
      <y>10</y>
      <width>100</width>
      <height>60</height>
@@ -174,8 +174,8 @@ background: &quot;white&quot;;</string>
   <widget class="QSlider" name="sldDisplayTime">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>405</y>
+     <x>250</x>
+     <y>415</y>
      <width>160</width>
      <height>21</height>
     </rect>
@@ -211,6 +211,11 @@ background: &quot;white&quot;;</string>
      <height>30</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
    <property name="styleSheet">
     <string notr="true">border: raised;
 border-width:2px;
@@ -223,8 +228,8 @@ background:white;</string>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>11</x>
-     <y>290</y>
+     <x>51</x>
+     <y>300</y>
      <width>150</width>
      <height>16</height>
     </rect>
@@ -263,8 +268,8 @@ color: blue;</string>
   <widget class="QProgressBar" name="progBarGood">
    <property name="geometry">
     <rect>
-     <x>201</x>
-     <y>290</y>
+     <x>241</x>
+     <y>300</y>
      <width>201</width>
      <height>23</height>
     </rect>
@@ -279,8 +284,8 @@ color: blue;</string>
   <widget class="QLabel" name="note4">
    <property name="geometry">
     <rect>
-     <x>326</x>
-     <y>160</y>
+     <x>370</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -309,7 +314,7 @@ background: &quot;white&quot;;</string>
     <rect>
      <x>121</x>
      <y>10</y>
-     <width>371</width>
+     <width>431</width>
      <height>40</height>
     </rect>
    </property>
@@ -334,8 +339,8 @@ color: blue;</string>
   <widget class="QLabel" name="note7">
    <property name="geometry">
     <rect>
-     <x>551</x>
-     <y>160</y>
+     <x>595</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -362,10 +367,10 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="lb_note">
    <property name="geometry">
     <rect>
-     <x>530</x>
+     <x>600</x>
      <y>80</y>
      <width>51</width>
-     <height>21</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="font">
@@ -380,8 +385,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="note4s">
    <property name="geometry">
     <rect>
-     <x>371</x>
-     <y>160</y>
+     <x>415</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -408,8 +413,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="note3s">
    <property name="geometry">
     <rect>
-     <x>281</x>
-     <y>160</y>
+     <x>325</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -436,8 +441,8 @@ background: &quot;white&quot;;</string>
   <widget class="QSlider" name="sldTimeoutDuration">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>460</y>
+     <x>250</x>
+     <y>470</y>
      <width>160</width>
      <height>31</height>
     </rect>
@@ -464,8 +469,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="note5">
    <property name="geometry">
     <rect>
-     <x>416</x>
-     <y>160</y>
+     <x>460</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -492,8 +497,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="note1">
    <property name="geometry">
     <rect>
-     <x>101</x>
-     <y>160</y>
+     <x>145</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -520,8 +525,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="lb_curr_activity">
    <property name="geometry">
     <rect>
-     <x>201</x>
-     <y>230</y>
+     <x>241</x>
+     <y>240</y>
      <width>210</width>
      <height>40</height>
     </rect>
@@ -546,8 +551,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>421</x>
-     <y>230</y>
+     <x>461</x>
+     <y>240</y>
      <width>150</width>
      <height>16</height>
     </rect>
@@ -559,8 +564,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="note3">
    <property name="geometry">
     <rect>
-     <x>236</x>
-     <y>160</y>
+     <x>280</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -587,8 +592,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="note0">
    <property name="geometry">
     <rect>
-     <x>11</x>
-     <y>160</y>
+     <x>55</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -615,8 +620,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="label_8">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>430</y>
+     <x>50</x>
+     <y>440</y>
      <width>150</width>
      <height>16</height>
     </rect>
@@ -628,8 +633,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="note2">
    <property name="geometry">
     <rect>
-     <x>191</x>
-     <y>160</y>
+     <x>235</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -656,8 +661,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="note6">
    <property name="geometry">
     <rect>
-     <x>506</x>
-     <y>160</y>
+     <x>550</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -684,8 +689,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>11</x>
-     <y>310</y>
+     <x>51</x>
+     <y>320</y>
      <width>170</width>
      <height>120</height>
     </rect>
@@ -700,10 +705,10 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="lb_arrow">
    <property name="geometry">
     <rect>
-     <x>11</x>
-     <y>100</y>
+     <x>55</x>
+     <y>119</y>
      <width>42</width>
-     <height>50</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -719,8 +724,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="note10">
    <property name="geometry">
     <rect>
-     <x>461</x>
-     <y>160</y>
+     <x>505</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -747,8 +752,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="lb_score_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>450</y>
+     <x>50</x>
+     <y>460</y>
      <width>170</width>
      <height>40</height>
     </rect>
@@ -763,8 +768,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="note0s">
    <property name="geometry">
     <rect>
-     <x>56</x>
-     <y>160</y>
+     <x>100</x>
+     <y>170</y>
      <width>42</width>
      <height>60</height>
     </rect>
@@ -791,8 +796,8 @@ background: &quot;white&quot;;</string>
   <widget class="QLabel" name="lb_score">
    <property name="geometry">
     <rect>
-     <x>11</x>
-     <y>250</y>
+     <x>51</x>
+     <y>260</y>
      <width>170</width>
      <height>40</height>
     </rect>
@@ -816,8 +821,8 @@ color: blue;</string>
   <widget class="QLabel" name="lb_DurationPos">
    <property name="geometry">
     <rect>
-     <x>390</x>
-     <y>390</y>
+     <x>430</x>
+     <y>400</y>
      <width>21</width>
      <height>31</height>
     </rect>
@@ -832,8 +837,8 @@ color: blue;</string>
   <widget class="QLabel" name="lb_TimeoutPos">
    <property name="geometry">
     <rect>
-     <x>390</x>
-     <y>450</y>
+     <x>430</x>
+     <y>460</y>
      <width>21</width>
      <height>31</height>
     </rect>
@@ -843,6 +848,29 @@ color: blue;</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignmentFlag::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnTunerON">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>60</y>
+     <width>80</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border: raised;
+border-width:2px;
+background:white;</string>
+   </property>
+   <property name="text">
+    <string>Tuner ON</string>
    </property>
   </widget>
  </widget>

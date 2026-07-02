@@ -296,6 +296,7 @@ void Widget::on_btnStart_clicked()
     restartAudioStream();
     qDebug() << "start pushed...";
     ui->btnStart->setVisible(false);
+    ui->btnTunerON->setVisible(false);
     qDebug() << "starting...";
     QString temp = "Lesson #" + currentlesson + " Key " + gKey[curLessonInt]
                    + " Test Notes " + gTestGroup[curLessonInt];
@@ -459,7 +460,7 @@ void Widget::Got_Note(int kbValue)
     qDebug() << "-->note found: " << kbValue;
     // stopSound();
     int heardNote = kbValue;
-    ui->lb_arrow->move(10+((heardNote - tonicNote)*45), 100);
+    ui->lb_arrow->move(55+((heardNote - tonicNote)*45), 115);
     ui->lb_arrow->repaint();
     kbPlayedNote = tonicNote + tileKbShift[playedNote];
     qDebug() << "-->heardNote: " << heardNote << " = " << kbPlayedNote;
@@ -620,6 +621,7 @@ void Widget::stopSound()
         if (reply == QMessageBox::Yes) {
             qDebug() << "continuing...";
             ui->lb_info->setText("Started Lesson\nfrom random notes");
+            ui->lb_curr_activity->setText("Lesson");
             m_audioSource->resume();
             playedCnt = 0;
             goodCnt = 0;
@@ -665,7 +667,7 @@ void Widget::getNextLesson(int indexVal)
     qDebug() << "m_buffer" << m_Speaker->m_buffer;
     m_audioOutput->suspend();
     curLessonInt = indexVal + 1;
-    currentlesson = QString::number(indexVal);
+    currentlesson = QString::number(curLessonInt);
     kbNotePlayLists.clear();
     gNote.clear();
     gKey.clear();
@@ -687,7 +689,9 @@ void Widget::getNextLesson(int indexVal)
     FileLoader::GetRandomTestSet(gTestGroup[curLessonInt]);
     qDebug() << "gTestGroup values: " << gTestGroup[curLessonInt];
     qDebug() <<  "gTestGroup = " << gTestGroup;
-
+    QString temp = "Lesson #" + currentlesson + " Key " + gKey[curLessonInt]
+                   + " Test Notes " + gTestGroup[curLessonInt];
+    ui->lb_title->setText(temp);
     orientationFlag=true;
     playedCnt = 0;
     goodCnt = 0;
@@ -709,5 +713,11 @@ void Widget::on_sldTimeoutDuration_valueChanged(int value)
     qDebug() << "--->value = " << value;
     playDuration = value*1000;
     ui->lb_TimeoutPos->setText(QString::number(value));
+}
+
+
+void Widget::on_btnTunerON_clicked()
+{
+    qDebug() << "--->turn starts here ";
 }
 
