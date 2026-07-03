@@ -319,8 +319,7 @@ void Widget::on_btnStart_clicked()
                    + " Test Notes " + gTestGroup[curLessonInt];
     ui->lb_title->setText(temp);
     ui->lb_score->setText("0 of 0");
-    ui->lb_info->setText("up scale 1 to 7\n octaves 3 times\ndown scale 7 to 1");
-    curLessonInt = currentlesson.toInt();
+    ui->lb_info->setText("up scale 1 to 7\n octaves 3 times\ndown scale 7 to 1");    
 
     // get sound array set
     tonicNote = tonic_map[gNote[curLessonInt]];
@@ -700,8 +699,8 @@ void Widget::getNextLesson(int indexVal)
         curLessonInt = indexVal - 1;
     } else {
         curLessonInt = indexVal;
-        currentlesson = QString::number(curLessonInt);
-        FileLoader::updateConfigLesson(curLessonInt);        
+        currentlesson = QString::number(indexVal + 1);
+        FileLoader::updateConfigLesson(indexVal + 1);
     }
     ui->lb_curr_activity->setText("Orientation");
     qDebug() << "testIndex value: " << curLessonInt;
