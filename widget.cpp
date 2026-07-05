@@ -47,6 +47,8 @@ int accValue = 0;
 int displayDuration = 3000;
 int playDuration = 3000;
 bool reviewFlag = false;
+bool tunerFlag = false;
+QString lessonData = "";
 
 
 Microphone::Microphone(const QAudioFormat &format) : m_format(format) {
@@ -100,7 +102,8 @@ qreal Microphone::getNoteValue(const char *data, qint64 len) const
         qDebug() <<"                      restart here";
         rec_arr_cnt = 0;
 
-        emit on_TimeOut();
+        if(tunerFlag) emit doRestartMicBuffer();
+        if(!tunerFlag) emit on_TimeOut();
         qDebug() <<"                      post restart here";
         return 0;
     }
@@ -187,6 +190,7 @@ Widget::Widget(QWidget *parent)
     initializeAudioInput(QMediaDevices::defaultAudioInput());
     initializeAudioOutput(m_devicesOut->defaultAudioOutput());
     QPixmap pix(":/img/down-arrow.png");
+    ui->btnTunerOFF->setVisible(false);
     ui->lb_arrow->setPixmap(pix);
     ui->lb_arrow->move(800, 100);
     FileLoader::ReadConfig();    
@@ -209,6 +213,7 @@ Widget::Widget(QWidget *parent)
     FileLoader::GetRandomTestSet(gTestGroup[curLessonInt]);
     FftStuff fts;
     orientationFlag = true;
+    lessonFlag = false;
     m_timer = new QTimer(this);
     m_Microphone->moveToThread(&MicThread);
     MicThread.setObjectName("MicThread");
@@ -216,7 +221,8 @@ Widget::Widget(QWidget *parent)
     m_Speaker->moveToThread(&SpeakerThread);
     connect(&ftw, &FftStuff::valueChanged,this, &Widget::updateKBnote, Qt::QueuedConnection);
     connect(&ftw, &FftStuff::on_foundNote,this, &Widget::Got_Note, Qt::QueuedConnection);
-    connect(m_Microphone, &Microphone::on_TimeOut, this, &Widget::TimeOut);
+    // connect(m_Microphone, &Microphone::on_TimeOut, this, &Widget::TimeOut);
+    connect(m_Microphone, &Microphone::doRestartMicBuffer, this, &Widget::TunerAgain);
     connect(m_timer,&QTimer::timeout,this,&Widget::TimeOut);
 }
 
@@ -302,12 +308,33 @@ void Widget::paintEvent(QPaintEvent * /* event */)
     ui->lb_tuner->setPixmap(pix);
 }
 
+void Widget::on_btnTunerON_clicked()
+{
+    qDebug() << "--->turn starts here ";
+    ui->btnStart->setVisible(false);
+    ui->btnTunerON->setVisible(false);
+    ui->btnTunerOFF->setVisible(true);
+    m_timer->stop();
+    tunerFlag = true;
+    restartAudioStream();
+    qDebug() << "starting...";
+}
+
+void Widget::on_btnTunerOFF_clicked()
+{
+    ui->btnStart->setVisible(true);
+    ui->btnTunerON->setVisible(true);
+    ui->btnTunerOFF->setVisible(false);
+    m_timer->stop();
+    tunerFlag = false;
+}
+
 void Widget::on_btnStart_clicked()
 {    
     restartAudioStream();
     qDebug() << "start pushed...";
     ui->btnStart->setVisible(false);
-    ui->btnTunerON->setVisible(false);
+    ui->btnTunerON->setVisible(false);    
     qDebug() << "starting...";
     if(reviewFlag)
     {
@@ -345,6 +372,9 @@ void Widget::restartAudioStream()
 
 void Widget::do_Orientation(int nPos)
 {
+
+    if(nPos == 0) lessonData = lessonData + "\nOrientation on Lesson "
+             + QString::number(curLessonInt + 1) + "\n";
     m_timer->setInterval(playDuration);
     m_timer->start();
     playedNote = orientation[nPos] - 1;
@@ -360,6 +390,9 @@ void Widget::do_Orientation(int nPos)
 
 void Widget::do_Quiz(int nPos)
 {
+    if(nPos == 0) lessonData = lessonData + "\n\nLesson "
+            + QString::number(curLessonInt + 1)
+            + " Test Notes " + gTestGroup[curLessonInt] + "\n";
     m_timer->setInterval(playDuration);
     m_timer->start();
     playedNote = testNotes[nPos] - 1;
@@ -461,6 +494,25 @@ void Widget::timeoutRetry()
     nPos++;
 }
 
+void Widget::TunerAgain()
+{
+    qDebug() << "get another samp[e";
+    m_timer->stop();
+    collectMicData = true;
+    for(int i = 0; i < 200000; i++)
+    {
+        rec_arr[i] = 0;
+    }
+    rec_arr_cnt = 0;
+    frame_start = 0;
+    frame_end = 2048;
+    m_Microphone->reset();
+    m_audioSource->reset();
+    restartAudioStream();
+    m_timer->setInterval(playDuration);
+    m_timer->start();
+}
+
 void Widget::Got_Note(int kbValue)
 {
     playedCnt++;
@@ -474,12 +526,13 @@ void Widget::Got_Note(int kbValue)
     QString temp = QString::number(goodCnt) + " of " + QString::number(playedCnt);
     ui->lb_score->setText(temp);
     qDebug() << "-->note found: " << kbValue;
-    // stopSound();
     int heardNote = kbValue;
     ui->lb_arrow->move(55+((heardNote - tonicNote)*45), 115);
     ui->lb_arrow->repaint();
     kbPlayedNote = tonicNote + tileKbShift[playedNote];
-    qDebug() << "-->heardNote: " << heardNote << " = " << kbPlayedNote;
+    qDebug() << "-->heardNote: " << heardNote << " = " << kbPlayedNote;    
+
+    lessonData = lessonData + "Played Note = " + QString::number(kbPlayedNote) + "  Heard Note = " +QString::number(heardNote) + "\n";
     switch (playedNote){
     case 0:
         if (kbPlayedNote == heardNote)
@@ -608,7 +661,7 @@ void Widget::Got_Note(int kbValue)
     ui->lb_arrow->move(800, 100);
     qDebug() << "Keyboard value heard: " << kbValue;
     // QThread::msleep(displayDuration);
-    stopSound();
+    activityEndCheck();
     if(nPos < 21 and orientationFlag)
     {
         play_next_note();
@@ -619,18 +672,21 @@ void Widget::Got_Note(int kbValue)
     }
 }
 
-void Widget::stopSound()
+void Widget::activityEndCheck()
 {
     qDebug() << "stop Sound...";
-    if(orientationFlag and nPos == 21)
+    if(orientationFlag and nPos == 21 and goodCnt > 11) //50% check passed
     {
+        orientationFlag = false;
+        lessonFlag = true;
+        m_audioSource->suspend();
         m_timer->stop();
         MicThread.exit();
         SpeakerThread.exit();
         SpeakerThread.start();
+        lessonData = lessonData + "Score is " + QString::number(goodCnt) + " of " + QString::number(playedCnt);
+        FileLoader::studentResults(lessonData);
 
-        orientationFlag = false;
-        m_audioSource->suspend();
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Orientarion Complete", "Continue?",
                                       QMessageBox::Yes|QMessageBox::No);
@@ -648,15 +704,42 @@ void Widget::stopSound()
             qDebug() << "No was clicked";
             QApplication::quit();
         }
+        if(orientationFlag and nPos == 21 and goodCnt < 12) //50% check failed
+        {
+            orientationFlag = true;
+            m_audioSource->suspend();
+            m_timer->stop();
+            MicThread.exit();
+            SpeakerThread.exit();
+            SpeakerThread.start();            
+            ui->lb_info->setText("Redo Orientation\nLess than 50%");
+            m_audioSource->resume();
+            ui->lb_score->setText("0 of 0");
+            playedCnt = 0;
+            goodCnt = 0;
+            nPos = 0;
+            MicThread.start();
+            nPos = 0;
+            QThread::msleep(500);
+            do_Orientation(nPos);
+        }
     }
-    if(!orientationFlag and nPos == 20)
+    if(lessonFlag and nPos == 20)
     {
+        // check for 100% or 5 averaging 90%
+        int pValue = (goodCnt *100) / playedCnt;
+        bool passTest = LessonPassCheck(pValue);
+        qDebug() << passTest;
+
         m_timer->stop();
         MicThread.exit();
         SpeakerThread.exit();
         SpeakerThread.start();
         m_audioSource->suspend();
         ui->lb_info->setText("TO GO TO THE\nNEXT LESSON\na test score of 100%\nor\n90% ave of last 5 tests of 20");
+        lessonData = lessonData + "Score is " + QString::number(goodCnt) + " of " + QString::number(playedCnt);
+        FileLoader::studentResults(lessonData);
+
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Lesson Complete", "Continue?",
                                       QMessageBox::Yes|QMessageBox::No);
@@ -676,6 +759,16 @@ void Widget::stopSound()
             QApplication::quit();
         }
     }
+}
+
+bool Widget::LessonPassCheck(int percentVal)
+{
+    qDebug() << "percentage = " << percentVal << "%" ;
+    ui->lb_TryGroup->setText(QString::number(percentVal) + "%");
+    if(percentVal == 100){
+        return true;
+    }
+    return false;
 }
 
 void Widget::getNextLesson(int indexVal)
@@ -733,17 +826,9 @@ void Widget::on_sldDisplayTime_valueChanged(int value)
     ui->lb_DurationPos->setText(QString::number(value));
 }
 
-
 void Widget::on_sldTimeoutDuration_valueChanged(int value)
 {
     qDebug() << "--->value = " << value;
     playDuration = value*1000;
     ui->lb_TimeoutPos->setText(QString::number(value));
 }
-
-
-void Widget::on_btnTunerON_clicked()
-{
-    qDebug() << "--->turn starts here ";
-}
-

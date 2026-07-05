@@ -24,8 +24,6 @@ extern bool collectMicData;
 class FftStuff : public QObject
 {
     Q_OBJECT
-public slots:
-    void onTimeout();
 
 signals:
     void valueChanged(int value, float acc);

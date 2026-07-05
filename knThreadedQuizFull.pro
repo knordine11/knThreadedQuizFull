@@ -39,6 +39,7 @@ DISTFILES += \
     fftw3/libfftw3l-3.dll \
     lessons.txt \
     note.png \
+    student.txt \
     v_sounds/click2.wav \
     v_sounds/click3.wav \
     v_sounds/click4.wav \

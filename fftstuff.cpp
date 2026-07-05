@@ -8,6 +8,7 @@
 
 using namespace std;
 bool collectMicData = true;
+extern bool tunerFlag;
 
 bool is_tuner = true;
 int noteA_oct;
@@ -193,8 +194,7 @@ void FftStuff::DoIt(int beg, int lengh)
         qDebug()<< ">>>>>>note acc = " << note_acc;
         qDebug()<< ">>>>>>kbValue = " << kbValue;
         qDebug()<< ">>>>>>kbValue = " << kbValue;
-        emit on_foundNote(kbValue);
-
+        if(!tunerFlag) emit on_foundNote(kbValue);
     }
 
     //  ======= PASSED FILTERING  =====   NOW  PROCESSES A GOOD FILTERED NOTE =======
@@ -218,11 +218,6 @@ void FftStuff::DoIt(int beg, int lengh)
 
 }
 // -------------------   end of main   modual   -------------------------------------------
-
-void FftStuff::onTimeout()
-{
-    qDebug() << "   $$$$$ %%%%%  TIME OUT HAPPENED  ";
-}
 
 double FftStuff::abs_c(fftw_complex c)
 {

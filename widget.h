@@ -39,6 +39,7 @@ public:
 signals:
     void levelChanged(qreal level);
     void on_TimeOut() const;
+    void doRestartMicBuffer() const;
 
 private:
     const QAudioFormat m_format;
@@ -78,11 +79,13 @@ public:
     QScopedPointer<Speaker> m_Speaker;
     QScopedPointer<QAudioSink> m_audioOutput;
     bool orientationFlag;
+    bool lessonFlag;
     void do_Orientation(int);
     void do_Quiz(int);
     void play_next_note();
     void timeoutRetry();
     void getNextLesson(int);
+    bool LessonPassCheck(int);
     int kbPlayedNote;
     int playedNote;
     int tonicNote;
@@ -98,9 +101,10 @@ protected:
 signals:
 
 public slots:
-    void stopSound();
+    void activityEndCheck();
     void updateKBnote(int kbValue, float acc);
     void TimeOut();
+    void TunerAgain();
     void Got_Note(int kbValue);
 
 private slots:
@@ -111,6 +115,8 @@ private slots:
     void on_sldTimeoutDuration_valueChanged(int value);
 
     void on_btnTunerON_clicked();
+
+    void on_btnTunerOFF_clicked();
 
 private:
     void initializeWindow();

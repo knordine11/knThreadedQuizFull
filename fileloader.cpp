@@ -168,6 +168,7 @@ void FileLoader::updateConfigLesson(int value)  // updates lesson number in conf
 
     file.close();
 
+    // QFile file2(":/data/config.txt");
     QFile file2("C://QtWorking/knThreadedQuizFull/config.txt");
     if (!file2.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text))
     {
@@ -180,4 +181,17 @@ void FileLoader::updateConfigLesson(int value)  // updates lesson number in conf
     streamOut << line2 << Qt::endl;
     streamOut << lessonNow;
     file2.close();
+}
+
+void FileLoader::studentResults(QString dataBlock)
+{
+    // QFile file3(":/reports/student.txt");
+    QFile file3("C://QtWorking/knThreadedQuizFull/student.txt");
+    if (!file3.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qCritical("Open failed");
+    }
+    QTextStream streamOut(&file3);
+    streamOut << dataBlock;
+    file3.close();
 }

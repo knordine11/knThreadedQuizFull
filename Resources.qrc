@@ -34,4 +34,8 @@
         <file>down-arrow.png</file>
         <file>note.png</file>
     </qresource>
+    <qresource prefix="/report"/>
+    <qresource prefix="/reports">
+        <file>student.txt</file>
+    </qresource>
 </RCC>
