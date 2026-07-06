@@ -27,6 +27,7 @@ extern QString currentlesson;
 const QList <QString> note_letters = {"C", "C#", "D", "D#", "E",
                                      "F", "F#", "G", "G#", "A", "A#", "B" };
 int curLessonInt;
+int listIndex;
 //int shiftedIndex = 0;
 int orientation [21] = {1,2,3,4,5,6,7,8,1,8,1,8,1,8,7,6,5,4,3,2,1};
 QMap<QString, int> tonic_map = {
@@ -199,7 +200,7 @@ Widget::Widget(QWidget *parent)
     ui->lb_title->setText("Lesson");
     accValue = 0;
     qDebug() << "currentlesson = " << currentlesson;
-    if(currentlesson != "1")
+    if(currentlesson != "1") //review adjust
     {
         reviewFlag = true;
         curLessonInt = currentlesson.toInt() - 2;
@@ -209,8 +210,10 @@ Widget::Widget(QWidget *parent)
         reviewFlag = false;
         curLessonInt = currentlesson.toInt() - 1;
     }
+    listIndex = curLessonInt;
+    currentlesson = QString::number(listIndex + 1);
 
-    FileLoader::GetRandomTestSet(gTestGroup[curLessonInt]);
+    FileLoader::GetRandomTestSet(gTestGroup[listIndex]);
     FftStuff fts;
     orientationFlag = true;
     lessonFlag = false;
@@ -342,16 +345,16 @@ void Widget::on_btnStart_clicked()
     } else{
         ui->lb_review->setText("Lesson");
     }
-    QString temp = "Lesson #" + QString::number(curLessonInt + 1) + " Key " + gKey[curLessonInt]
-                   + " Test Notes " + gTestGroup[curLessonInt];
+    QString temp = "Lesson #" + QString::number(listIndex + 1) + " Key " + gKey[listIndex]
+                   + " Test Notes " + gTestGroup[listIndex];
     ui->lb_title->setText(temp);
     ui->lb_score->setText("0 of 0");
     ui->lb_info->setText("up scale 1 to 7\n octaves 3 times\ndown scale 7 to 1");    
 
     // get sound array set
-    tonicNote = tonic_map[gNote[curLessonInt]];
+    tonicNote = tonic_map[gNote[listIndex]];
     qDebug() << tonicNote;
-    qDebug() << gNote[curLessonInt];
+    qDebug() << gNote[listIndex];
     FileLoader files;
     files.GetFileList(tonicNote);
     buildkbNotePlayList(tonicNote);
@@ -392,7 +395,7 @@ void Widget::do_Quiz(int nPos)
 {
     if(nPos == 0) lessonData = lessonData + "\n\nLesson "
             + QString::number(curLessonInt + 1)
-            + " Test Notes " + gTestGroup[curLessonInt] + "\n";
+            + " Test Notes " + gTestGroup[listIndex] + "\n";
     m_timer->setInterval(playDuration);
     m_timer->start();
     playedNote = testNotes[nPos] - 1;
@@ -693,7 +696,7 @@ void Widget::activityEndCheck()
         if (reply == QMessageBox::Yes) {
             qDebug() << "continuing...";
             ui->lb_info->setText("Started Lesson\nfrom random notes");
-            // ui->lb_review->setText("Lesson");
+            ui->lb_review->setText("Lesson");
             ui->lb_curr_activity->setText("Lesson");
             m_audioSource->resume();
             playedCnt = 0;
@@ -704,7 +707,7 @@ void Widget::activityEndCheck()
             qDebug() << "No was clicked";
             QApplication::quit();
         }
-        if(orientationFlag and nPos == 21 and goodCnt < 12) //50% check failed
+        if(orientationFlag and nPos == 21 and goodCnt < 10) //50% check failed
         {
             orientationFlag = true;
             m_audioSource->suspend();
@@ -730,6 +733,7 @@ void Widget::activityEndCheck()
         int pValue = (goodCnt *100) / playedCnt;
         bool passTest = LessonPassCheck(pValue);
         qDebug() << passTest;
+        reviewFlag = false;
 
         m_timer->stop();
         MicThread.exit();
@@ -751,9 +755,9 @@ void Widget::activityEndCheck()
             nPos = 0;
 
             qDebug() << "test complete";
-            qDebug() << "testIndex value: " << curLessonInt;
+            qDebug() << "listIndex value: " << listIndex;
             MicThread.start();
-            getNextLesson(currentlesson.toInt());
+            getNextLesson(listIndex);
         } else {
             qDebug() << "No was clicked";
             QApplication::quit();
@@ -773,6 +777,8 @@ bool Widget::LessonPassCheck(int percentVal)
 
 void Widget::getNextLesson(int indexVal)
 {
+    indexVal++;
+    listIndex = indexVal;
     m_Speaker->clearBuffer();
     qDebug() << "m_buffer" << m_Speaker->m_buffer;
     m_audioOutput->suspend();
@@ -786,30 +792,23 @@ void Widget::getNextLesson(int indexVal)
     rawRecArrays.clear();
 
     // update config to new lesson
-    if(ui->lb_review->text() == "Review"){
-        ui->lb_review->setText("Lesson");
+    FileLoader::updateConfigLesson(indexVal + 1);
 
-        curLessonInt = indexVal - 1;
-    } else {
-        curLessonInt = indexVal;
-        currentlesson = QString::number(indexVal + 1);
-        FileLoader::updateConfigLesson(indexVal + 1);
-    }
     ui->lb_curr_activity->setText("Orientation");
-    qDebug() << "testIndex value: " << curLessonInt;
+    qDebug() << "testIndex value: " << indexVal;
     FileLoader files;
     // get sound array set
     FileLoader::ReadLesson(); //rebuild lists
-    tonicNote = tonic_map[gNote[curLessonInt]];
+    tonicNote = tonic_map[gNote[indexVal]];
     files.GetFileList(tonicNote);
     buildkbNotePlayList(tonicNote);
     qDebug() << "tonicNote = " << tonicNote;
-    qDebug() << "gNote = " << gNote[curLessonInt];
-    FileLoader::GetRandomTestSet(gTestGroup[curLessonInt]);
-    qDebug() << "gTestGroup values: " << gTestGroup[curLessonInt];
+    qDebug() << "gNote = " << gNote[indexVal];
+    FileLoader::GetRandomTestSet(gTestGroup[indexVal]);
+    qDebug() << "gTestGroup values: " << gTestGroup[indexVal];
     qDebug() <<  "gTestGroup = " << gTestGroup;
-    QString temp = "Lesson #" + currentlesson + " Key " + gKey[curLessonInt]
-                   + " Test Notes " + gTestGroup[curLessonInt];
+    QString temp = "Lesson #" + QString::number(indexVal + 1) + " Key " + gKey[indexVal]
+                   + " Test Notes " + gTestGroup[indexVal];
     ui->lb_title->setText(temp);
     orientationFlag=true;
     playedCnt = 0;
