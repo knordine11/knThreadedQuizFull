@@ -49,7 +49,12 @@ int displayDuration = 3000;
 int playDuration = 3000;
 bool reviewFlag = false;
 bool tunerFlag = false;
+bool passTest = false;
 QString lessonData = "";
+QString tryData = "";
+int tryCnt = 0;
+int tryAvg = 0;
+int scoreTotals = 0;
 
 
 Microphone::Microphone(const QAudioFormat &format) : m_format(format) {
@@ -423,36 +428,6 @@ void Widget::updateKBnote(int kbValue, float acc)
     ui->lb_tuner->repaint();
 }
 
-void Widget::play_next_note()
-{
-    qDebug() << "next pressed";
-    qDebug() << "SpeakerThread : " << SpeakerThread.isRunning();
-    qDebug() << "micThread running: " << MicThread.isRunning();
-    qDebug() << "m_Microphone is open: " << m_Microphone->isOpen();
-    // zero out rec_arr with each mic get
-    for(int i = 0; i < 200000; i++)
-    {
-        rec_arr[i] = 0;
-    }
-    rec_arr_cnt = 0;
-    frame_start = 0;
-    frame_end = 2048;
-    m_Microphone->reset();
-    m_audioSource->reset();
-    restartAudioStream();
-    QThread::msleep(100);
-    if (orientationFlag)
-    {
-        do_Orientation(nPos);
-    }
-    else
-    {
-        do_Quiz(nPos);
-    }
-
-    nPos++;
-}
-
 void Widget::TimeOut()
 {
     m_timer->stop();
@@ -530,7 +505,15 @@ void Widget::Got_Note(int kbValue)
     ui->lb_score->setText(temp);
     qDebug() << "-->note found: " << kbValue;
     int heardNote = kbValue;
-    ui->lb_arrow->move(55+((heardNote - tonicNote)*45), 115);
+    int floatingNoteValue = kbValue%12;
+    qDebug() << "Floating value = " << floatingNoteValue;
+    if(heardNote < tonicNote){
+        ui->lb_Octave->setText("-1 oct");
+        heardNote += 12;
+    }
+    int octOffBy = 55+(heardNote - tonicNote)*45;
+    ui->lb_Octave->move(octOffBy, 120);
+    ui->lb_arrow->move(55+((heardNote - tonicNote)*45), 150);
     ui->lb_arrow->repaint();
     kbPlayedNote = tonicNote + tileKbShift[playedNote];
     qDebug() << "-->heardNote: " << heardNote << " = " << kbPlayedNote;    
@@ -661,10 +644,11 @@ void Widget::Got_Note(int kbValue)
                              " border-width: 3px; border-color: black;}");
 
     // m_Microphone->start();
+    ui->lb_Octave->setText("");
     ui->lb_arrow->move(800, 100);
     qDebug() << "Keyboard value heard: " << kbValue;
-    // QThread::msleep(displayDuration);
     activityEndCheck();
+
     if(nPos < 21 and orientationFlag)
     {
         play_next_note();
@@ -673,6 +657,36 @@ void Widget::Got_Note(int kbValue)
     {
         play_next_note();
     }
+}
+
+void Widget::play_next_note()
+{
+    qDebug() << "next pressed";
+    qDebug() << "SpeakerThread : " << SpeakerThread.isRunning();
+    qDebug() << "micThread running: " << MicThread.isRunning();
+    qDebug() << "m_Microphone is open: " << m_Microphone->isOpen();
+    // zero out rec_arr with each mic get
+    for(int i = 0; i < 200000; i++)
+    {
+        rec_arr[i] = 0;
+    }
+    rec_arr_cnt = 0;
+    frame_start = 0;
+    frame_end = 2048;
+    m_Microphone->reset();
+    m_audioSource->reset();
+    restartAudioStream();
+    QThread::msleep(100);
+    if (orientationFlag)
+    {
+        do_Orientation(nPos);
+    }
+    else
+    {
+        do_Quiz(nPos);
+    }
+
+    nPos++;
 }
 
 void Widget::activityEndCheck()
@@ -696,7 +710,6 @@ void Widget::activityEndCheck()
         if (reply == QMessageBox::Yes) {
             qDebug() << "continuing...";
             ui->lb_info->setText("Started Lesson\nfrom random notes");
-            ui->lb_review->setText("Lesson");
             ui->lb_curr_activity->setText("Lesson");
             m_audioSource->resume();
             playedCnt = 0;
@@ -707,43 +720,60 @@ void Widget::activityEndCheck()
             qDebug() << "No was clicked";
             QApplication::quit();
         }
-        if(orientationFlag and nPos == 21 and goodCnt < 10) //50% check failed
-        {
-            orientationFlag = true;
-            m_audioSource->suspend();
-            m_timer->stop();
-            MicThread.exit();
-            SpeakerThread.exit();
-            SpeakerThread.start();            
-            ui->lb_info->setText("Redo Orientation\nLess than 50%");
-            m_audioSource->resume();
-            ui->lb_score->setText("0 of 0");
-            playedCnt = 0;
-            goodCnt = 0;
-            nPos = 0;
-            MicThread.start();
-            nPos = 0;
-            QThread::msleep(500);
-            do_Orientation(nPos);
-        }
     }
-    if(lessonFlag and nPos == 20)
+    if(orientationFlag and nPos == 21 and goodCnt <= 11) //50% check failed
     {
-        // check for 100% or 5 averaging 90%
-        int pValue = (goodCnt *100) / playedCnt;
-        bool passTest = LessonPassCheck(pValue);
-        qDebug() << passTest;
-        reviewFlag = false;
-
+        m_audioSource->suspend();
         m_timer->stop();
         MicThread.exit();
         SpeakerThread.exit();
         SpeakerThread.start();
-        m_audioSource->suspend();
-        ui->lb_info->setText("TO GO TO THE\nNEXT LESSON\na test score of 100%\nor\n90% ave of last 5 tests of 20");
+        ui->lb_info->setText("Redo Orientation\nLess than 50%");
+        m_audioSource->resume();
+        ui->lb_score->setText("0 of 0");
+        playedCnt = 0;
+        goodCnt = 0;
+        nPos = 0;
+        MicThread.start();
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Failed to get 50%", "Repeat?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            qDebug() << "continuing...";
+            do_Orientation(nPos);
+        } else {
+            qDebug() << "No was clicked";
+            QApplication::quit();
+        }
+    }
+    if(lessonFlag and nPos == 20)
+    {
         lessonData = lessonData + "Score is " + QString::number(goodCnt) + " of " + QString::number(playedCnt);
         FileLoader::studentResults(lessonData);
 
+        // check for 100% or 5 averaging 90%
+        int pValue = (goodCnt *100) / playedCnt;
+        tryCnt++;
+        ui->lb_trycnt->setText(QString::number(tryCnt));
+        scoreTotals += pValue;
+        tryAvg = scoreTotals/tryCnt;
+        ui->lb_lessonAvg->setText(QString::number(tryAvg));
+        tryData =tryData + QString::number(tryCnt) + " - " + QString::number(pValue) + "%\n";
+        ui->lb_TryGroup->setText(tryData);
+        passTest = LessonPassCheck(pValue);
+        qDebug() << passTest;
+    }
+
+    if(lessonFlag and nPos == 20 and passTest)
+    {
+        reviewFlag = false;
+        m_audioSource->suspend();
+        m_timer->stop();
+        MicThread.exit();
+        SpeakerThread.exit();
+        SpeakerThread.start();
+        m_audioOutput->stop();
+        m_audioOutput->reset();
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Lesson Complete", "Continue?",
                                       QMessageBox::Yes|QMessageBox::No);
@@ -753,9 +783,15 @@ void Widget::activityEndCheck()
             playedCnt = 0;
             goodCnt = 0;
             nPos = 0;
-
-            qDebug() << "test complete";
-            qDebug() << "listIndex value: " << listIndex;
+            tryCnt = 0;
+            tryAvg = 0;
+            tryData = "";
+            if(listIndex == 11)
+            {
+                qDebug() << "test complete";
+                qDebug() << "listIndex value: " << listIndex;
+                QApplication::quit();
+            }
             MicThread.start();
             getNextLesson(listIndex);
         } else {
@@ -763,13 +799,49 @@ void Widget::activityEndCheck()
             QApplication::quit();
         }
     }
+
+    if(lessonFlag and nPos == 20 and !passTest)
+    {
+        m_audioSource->suspend();
+        for(int i = 0; i < 200000; i++)
+        {
+            rec_arr[i] = 0;
+        }
+        m_timer->stop();
+        MicThread.exit();
+        SpeakerThread.exit();
+        SpeakerThread.start();
+        m_audioOutput->stop();
+        m_audioOutput->reset();
+        ui->lb_info->setText("TO GO TO THE\nNEXT LESSON\na test score of 100%\nor\n90% ave of last 5 tests of 20");
+
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Failed to get 100%", "Repeat?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            qDebug() << "continuing...";
+            m_audioSource->resume();
+            ui->lb_score->setText("0 of 0");
+            playedCnt = 0;
+            goodCnt = 0;
+            nPos = 0;
+            MicThread.start();
+            do_Quiz(nPos);
+        } else {
+            qDebug() << "No was clicked";
+            QApplication::quit();
+        }
+        return;
+    }
 }
 
 bool Widget::LessonPassCheck(int percentVal)
 {
-    qDebug() << "percentage = " << percentVal << "%" ;
-    ui->lb_TryGroup->setText(QString::number(percentVal) + "%");
     if(percentVal == 100){
+        return true;
+    }
+    if(tryCnt > 4 and tryAvg > 89)
+    {
         return true;
     }
     return false;
@@ -779,9 +851,7 @@ void Widget::getNextLesson(int indexVal)
 {
     indexVal++;
     listIndex = indexVal;
-    m_Speaker->clearBuffer();
-    qDebug() << "m_buffer" << m_Speaker->m_buffer;
-    m_audioOutput->suspend();
+    m_audioOutput->start();
 
     kbNotePlayLists.clear();
     gNote.clear();
@@ -795,6 +865,8 @@ void Widget::getNextLesson(int indexVal)
     FileLoader::updateConfigLesson(indexVal + 1);
 
     ui->lb_curr_activity->setText("Orientation");
+    ui->lb_TryGroup->setText("");
+    ui->lb_lessonAvg->setText("");
     qDebug() << "testIndex value: " << indexVal;
     FileLoader files;
     // get sound array set
