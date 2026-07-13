@@ -510,6 +510,14 @@ void Widget::Got_Note(int kbValue)
     if(heardNote < tonicNote){
         ui->lb_Octave->setText("-1 oct");
         heardNote += 12;
+        if(heardNote < tonicNote){
+            ui->lb_Octave->setText("-2 oct");
+            heardNote += 12;
+        }
+    }
+    if(heardNote > tonicNote + 12){
+        ui->lb_Octave->setText("+1 oct");
+        heardNote -= 12;
     }
     int octOffBy = 55+(heardNote - tonicNote)*45;
     ui->lb_Octave->move(octOffBy, 120);
@@ -665,6 +673,8 @@ void Widget::play_next_note()
     qDebug() << "SpeakerThread : " << SpeakerThread.isRunning();
     qDebug() << "micThread running: " << MicThread.isRunning();
     qDebug() << "m_Microphone is open: " << m_Microphone->isOpen();
+
+
     // zero out rec_arr with each mic get
     for(int i = 0; i < 200000; i++)
     {
@@ -676,12 +686,11 @@ void Widget::play_next_note()
     m_Microphone->reset();
     m_audioSource->reset();
     restartAudioStream();
-    QThread::msleep(100);
     if (orientationFlag)
     {
         do_Orientation(nPos);
     }
-    else
+    if(!orientationFlag)
     {
         do_Quiz(nPos);
     }
@@ -802,11 +811,7 @@ void Widget::activityEndCheck()
 
     if(lessonFlag and nPos == 20 and !passTest)
     {
-        m_audioSource->suspend();
-        for(int i = 0; i < 200000; i++)
-        {
-            rec_arr[i] = 0;
-        }
+        m_audioSource->suspend();        
         m_timer->stop();
         MicThread.exit();
         SpeakerThread.exit();
@@ -826,7 +831,8 @@ void Widget::activityEndCheck()
             goodCnt = 0;
             nPos = 0;
             MicThread.start();
-            do_Quiz(nPos);
+            QThread::msleep(100);
+            play_next_note();
         } else {
             qDebug() << "No was clicked";
             QApplication::quit();
@@ -865,6 +871,7 @@ void Widget::getNextLesson(int indexVal)
     FileLoader::updateConfigLesson(indexVal + 1);
 
     ui->lb_curr_activity->setText("Orientation");
+    ui->lb_trycnt->setText("");
     ui->lb_TryGroup->setText("");
     ui->lb_lessonAvg->setText("");
     qDebug() << "testIndex value: " << indexVal;
