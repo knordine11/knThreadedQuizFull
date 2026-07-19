@@ -31,6 +31,7 @@ public:
     static void GetRandomTestSet(QString randomNotes);
     static void updateConfigLesson(int value);
     static void studentResults(QString);
+    static void postRecArr();
     QString filenameChosen;
     QString filename;
     QAudioOutput *m_audioOutput = nullptr;

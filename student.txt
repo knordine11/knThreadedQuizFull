@@ -3,7 +3,122 @@ Orientation on Lesson 1
 Played Note = 43  Heard Note = 43
 Played Note = 45  Heard Note = 45
 Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Score is 19 of 20
+
+Lesson 1 Test Notes 1,2
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 47
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Score is 19 of 20
+
+Lesson 1 Test Notes 1,2
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 46
+Played Note = 45  Heard Note = 47
+Played Note = 45  Heard Note = 50
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 47
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Score is 16 of 20
+
+Lesson 1 Test Notes 1,2
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 44
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 50
+Played Note = 43  Heard Note = 52
+Played Note = 45  Heard Note = 43
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 44
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 45
 Played Note = 43  Heard Note = 54
+Score is 14 of 20
+
+Lesson 1 Test Notes 1,2
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 47
+Played Note = 45  Heard Note = 48
+Played Note = 45  Heard Note = 50
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Score is 17 of 20
+
+Lesson 1 Test Notes 1,2
+Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 45
+Played Note = 43  Heard Note = 43
+Played Note = 43  Heard Note = 43
 Played Note = 45  Heard Note = 45
 Played Note = 43  Heard Note = 43
 Played Note = 43  Heard Note = 43
@@ -16,7 +131,7 @@ Played Note = 45  Heard Note = 45
 Played Note = 45  Heard Note = 45
 Played Note = 45  Heard Note = 45
 Played Note = 45  Heard Note = 45
-Played Note = 45  Heard Note = 45
+Played Note = 45  Heard Note = 47
 Played Note = 43  Heard Note = 43
 Played Note = 45  Heard Note = 45
 Played Note = 43  Heard Note = 43

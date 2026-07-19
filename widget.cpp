@@ -51,6 +51,7 @@ bool reviewFlag = false;
 bool tunerFlag = false;
 bool passTest = false;
 QString lessonData = "";
+QList<int> tryDataInt[20];
 QString tryData = "";
 int tryCnt = 0;
 int tryAvg = 0;
@@ -670,22 +671,21 @@ void Widget::Got_Note(int kbValue)
 void Widget::play_next_note()
 {
     qDebug() << "next pressed";
-    qDebug() << "SpeakerThread : " << SpeakerThread.isRunning();
+    qDebug() << "SpeakerThread running: " << SpeakerThread.isRunning();
     qDebug() << "micThread running: " << MicThread.isRunning();
     qDebug() << "m_Microphone is open: " << m_Microphone->isOpen();
 
-
-    // zero out rec_arr with each mic get
-    for(int i = 0; i < 200000; i++)
-    {
-        rec_arr[i] = 0;
-    }
     rec_arr_cnt = 0;
     frame_start = 0;
     frame_end = 2048;
     m_Microphone->reset();
     m_audioSource->reset();
     restartAudioStream();
+    // zero out rec_arr with each mic get
+    for(int i = 0; i < 200000; i++)
+    {
+        rec_arr[i] = 0;
+    }
     if (orientationFlag)
     {
         do_Orientation(nPos);
@@ -694,7 +694,6 @@ void Widget::play_next_note()
     {
         do_Quiz(nPos);
     }
-
     nPos++;
 }
 
@@ -762,15 +761,36 @@ void Widget::activityEndCheck()
 
         // check for 100% or 5 averaging 90%
         int pValue = (goodCnt *100) / playedCnt;
-        tryCnt++;
-        ui->lb_trycnt->setText(QString::number(tryCnt));
-        scoreTotals += pValue;
-        tryAvg = scoreTotals/tryCnt;
-        ui->lb_lessonAvg->setText(QString::number(tryAvg));
-        tryData =tryData + QString::number(tryCnt) + " - " + QString::number(pValue) + "%\n";
-        ui->lb_TryGroup->setText(tryData);
-        passTest = LessonPassCheck(pValue);
-        qDebug() << passTest;
+        if(tryCnt <= 5)
+        {
+            tryCnt++;
+            ui->lb_trycnt->setText(QString::number(tryCnt));
+            scoreTotals += (goodCnt * 5);
+            tryAvg = scoreTotals/tryCnt;
+            ui->lb_lessonAvg->setText(QString::number(tryAvg));
+            tryData =tryData + QString::number(tryCnt) + " - " + QString::number(pValue) + "%\n";
+            tryDataInt->append(pValue);
+            ui->lb_TryGroup->setText(tryData);            
+            passTest = LessonPassCheck(pValue);
+            qDebug() << passTest;
+        } else {
+            //adjust info ... only the last 5 trys
+            tryCnt++;
+            ui->lb_trycnt->setText(QString::number(tryCnt));
+            qDebug() << tryData;
+            int markerPos = tryData.indexOf("\n");
+            qDebug() << markerPos;
+            tryData = tryData.sliced(markerPos);
+            tryData =tryData + QString::number(tryCnt) + " - " + QString::number(pValue) + "%\n";
+
+            ui->lb_TryGroup->setText(tryData);
+            tryDataInt->removeFirst();
+            tryDataInt->append(pValue);
+            // add ints and divide by 5
+            qDebug() << "tryDataInt list = " << tryDataInt;
+            passTest = LessonPassCheck(pValue);
+            qDebug() << passTest;
+        }
     }
 
     if(lessonFlag and nPos == 20 and passTest)
@@ -818,6 +838,7 @@ void Widget::activityEndCheck()
         SpeakerThread.start();
         m_audioOutput->stop();
         m_audioOutput->reset();
+        m_Speaker->clearBuffer();
         ui->lb_info->setText("TO GO TO THE\nNEXT LESSON\na test score of 100%\nor\n90% ave of last 5 tests of 20");
 
         QMessageBox::StandardButton reply;
@@ -831,13 +852,14 @@ void Widget::activityEndCheck()
             goodCnt = 0;
             nPos = 0;
             MicThread.start();
+
+            m_Speaker->clearBuffer();
             QThread::msleep(100);
-            play_next_note();
+            return;
         } else {
             qDebug() << "No was clicked";
             QApplication::quit();
         }
-        return;
     }
 }
 

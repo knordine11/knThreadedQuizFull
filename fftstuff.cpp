@@ -1,4 +1,5 @@
 #include "fftstuff.h"
+#include "fileloader.h"
 #include <iostream>
 #include "fftw3/fftw3.h"
 #include "qdebug.h"
@@ -187,6 +188,7 @@ void FftStuff::DoIt(int beg, int lengh)
     }
     else
     {
+        // FileLoader::postRecArr();  //pickle call
         int kbValue = noteC_no + noteC_oct*12;
         emit valueChanged(kbValue, note_acc);
         qDebug()<< ">>>>>>oct value = " << noteC_oct;
@@ -325,10 +327,10 @@ double FftStuff::get_fun()
     double diff_a;
     double move_f;
     // cout<<endl<<"---------------------------------------   GET FUN  -----------------"<<endl;
-    // cout << " 1 [ " << freq1<<" ]         lev "<<binA1<<endl<<
-    //     " 2 [ " << freq2<<" ]         lev "<<binA2<<endl<<
-    //     " 3 [ " << freq3<<" ]         lev "<<binA3<<
-    //     " --------- last lev 4 , 5 ->  "<<binA4<<"   "<<binA5<<endl<<endl;
+    cout << " 1 [ " << freq1<<" ]         lev "<<binA1<<endl<<
+        " 2 [ " << freq2<<" ]         lev "<<binA2<<endl<<
+        " 3 [ " << freq3<<" ]         lev "<<binA3<<
+        " --------- last lev 4 , 5 ->  "<<binA4<<"   "<<binA5<<endl<<endl;
 
     if(binA1 < tol_max_peak){cout<<"          # (1)   1st pk freq   TOO LOW    <-----  NO GOOD"<<endl<<endl;return 0.0;};
     if(binA2 < tol_floor){cout<<"          # (2)   2nd freq TOO LOW  <----- FIRST FREQ"<<endl;return freq1;};

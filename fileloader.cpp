@@ -1,10 +1,12 @@
 #include "fileloader.h"
+#include "fftstuff.h"
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
 #include <QMediaPlayer>
 #include <QAudioOutput>
 #include <QRandomGenerator>
+#include <QDateTime>
 
 QString imgpath;
 QString soundpath;
@@ -15,6 +17,7 @@ QList<QString> gTestGroup;
 QList<QString> noteFiles;
 QList<int> testNotes;
 QList<QByteArray> rawRecArrays;
+extern double rec_arr[];
 
 FileLoader::FileLoader(QObject *parent)
     : QObject{parent}
@@ -194,4 +197,22 @@ void FileLoader::studentResults(QString dataBlock)
     QTextStream streamOut(&file3);
     streamOut << dataBlock;
     file3.close();
+}
+
+void FileLoader::postRecArr()
+{
+    QString pickleName = "Pickle" + QString::number(QDateTime::currentSecsSinceEpoch());
+
+    QFile file4("C://QtpData/" + pickleName + ".dat");
+    if (!file4.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qCritical("Open failed");
+    }
+    QTextStream streamOut(&file4);
+    for(int i = 0; i < rec_arr_cnt; i++)
+     {
+         streamOut << QString::number(rec_arr[i]) + "|";
+     }
+
+    file4.close();
 }

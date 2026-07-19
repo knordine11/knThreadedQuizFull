@@ -358,7 +358,7 @@ Border-width: 3px;
 background: &quot;white&quot;;</string>
    </property>
    <property name="text">
-    <string>8</string>
+    <string>1</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignmentFlag::AlignCenter</set>
